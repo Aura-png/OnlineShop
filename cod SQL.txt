@@ -1,0 +1,146 @@
+MAGAZIN ONLINE DE COSMETICE  Teo&Aura SRL
+
+*Tabela contact_magazin  *
+	-id_contact_magazin
+	-nume_magazin;
+	-nr_telefon;
+	-adresa_email;
+	-adresa_URL;
+
+*Tabela magazin  *
+	-id_contact_magazin
+	-id_produs;
+
+*Tabela factura    *
+	-id_factura;
+	-id_client;
+	-pret_total;
+	
+*Tabela comanda_inregistrata  *
+	-id_comanda;
+	-id_client;
+	-id_produs;
+	-cantitate_produs;
+	-id_metoda_plata;
+	-id_factura;
+	-data_comenzii
+
+*Tabela adresa_client  *
+	-id_adresa_client;
+	-localitate;
+	-strada;
+	-numar;
+	-judet;
+	-cod_postal;
+	-tara;
+
+*Tabela card_credit    *
+	-id_card;
+	-numar_card;
+	-data_expirarii;
+	-suma_card;
+
+*Tabela client   *
+	-id_client;
+	-nume;
+	-prenume;
+	-id_adresa_client;
+	-data_nasterii;
+	-nr_telefon;
+	-adresa_email;
+	-card_credit; -optional
+	
+*Tabela metoda_plata       *
+	-id_metoda_plata;
+	-tip_plata;
+
+*Tabela produs   *
+	-id_produs; -PK
+	-nume_produs;
+	-pret;
+	-disponibilitate;
+	-firma;
+	-nume_categorie
+
+
+create database magazin_de_cosmetice_online;
+create table contact_magazin(
+id_contact_magazin int primary key not null,
+nume_magazin varchar(45) not null unique,
+numar_telefon varchar(10) not null,
+adresa_email varchar(45) not null,
+adresa_URL varchar(45) not null);
+
+create table produs(
+id_produs int primary key not null auto_increment,
+nume_produs varchar(45) not null unique,
+nume_categorie varchar(45) not null,
+firma varchar(45) not null,
+pret decimal(5,2) not null,
+disponibilitate varchar(20) not null,
+cantitate int);
+
+
+create table magazin(
+id_contact_magazin int not null,
+id_produs int not null,
+foreign key (id_produs) references produs (id_produs),
+foreign key (id_contact_magazin) references contact_magazin (id_contact_magazin));
+
+create table metoda_plata(
+id_metoda_plata int not null auto_increment primary key,
+tip_plata varchar(20) not null);
+
+
+create table card_credit(
+id_card int not null primary key,
+numar_card varchar(16) unique,
+data_expirare date,
+suma_card decimal(5,2));
+
+create table adresa_client(
+id_adresa_client int not null auto_increment primary key,
+localitate varchar(45) not null,
+strada varchar(45) not null,
+numar int not null,
+judet varchar(45) not null,
+cod_postal varchar(6) not null,
+tara varchar(45) not null);
+
+create table client_magazin(
+id_client int not null auto_increment primary key,
+nume_client varchar(45) not null,
+prenume_client varchar(45) not null,
+id_adresa_client int not null,
+data_nasterii date,
+numar_telefon varchar(10) not null,
+adresa_email varchar(45),
+id_card int,
+parola_client varchar(45) not null unique,
+foreign key (id_adresa_client) references adresa_client (id_adresa_client),
+foreign key (id_card) references card_credit (id_card));
+
+create table factura(
+id_factura int not null auto_increment primary key,
+id_client int not null,
+pret_total decimal(5,2),
+id_produs int not null,
+foreign key (id_produs) references produs (id_produs),
+foreign key (id_client) references client_magazin (id_client));
+
+
+create table comanda_inregistrata(
+id_comanda int not null auto_increment primary key,
+id_client int not null,
+id_produs int not null,
+cantitate_produs int not null,
+id_metoda_plata int not null,
+id_factura int not null,
+data_comanda date not null,
+foreign key (id_client) references client_magazin (id_client),
+foreign key (id_produs) references produs (id_produs),
+foreign key (id_metoda_plata) references metoda_plata (id_metoda_plata),
+foreign key (id_factura) references factura (id_factura));
+
+
+

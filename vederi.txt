@@ -1,0 +1,45 @@
+use magazin_de_cosmetice_online;
+
+-- 1)view pentru clientii romani
+CREATE VIEW clienti_romani AS
+SELECT nume_client, prenume_client
+FROM client_magazin
+JOIN adresa_client
+ON client_magazin.id_adresa_client = adresa_client.id_adresa_client
+WHERE tara = "Romania";
+
+SELECT* 
+FROM clienti_romani;
+
+-- 2)view pentru produse cu pret > 50
+CREATE VIEW produse_peste_50 AS
+SELECT nume_produs, pret
+FROM produs
+WHERE pret > 50;
+
+SELECT* 
+FROM produse_peste_50;
+
+-- 3)view pentru clientii care au metoda de plata cu cardul
+CREATE VIEW plata_cu_card AS
+SELECT nume_client,prenume_client
+FROM client_magazin
+JOIN comanda_inregistrata
+ON comanda_inregistrata.id_client = client_magazin.id_client
+JOIN metoda_plata
+ON comanda_inregistrata.id_metoda_plata = metoda_plata.id_metoda_plata
+WHERE tip_plata = "plata cu cardul";
+
+SELECT* 
+FROM plata_cu_card;
+
+-- 4)view pentru facturile pentru care id_client > 6 si id_produs = 10
+CREATE VIEW factura_produs AS
+SELECT id_factura
+FROM factura
+JOIN client_magazin
+ON factura.id_client = client_magazin.id_client
+WHERE client_magazin.id_client > 6 and id_produs = 10;
+
+SELECT* 
+FROM factura_produs;

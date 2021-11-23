@@ -1,0 +1,115 @@
+-- Numar clienti
+SELECT count(*)
+from client_magazin;
+
+-- Media preturilor produselor din categoria rujurilor
+SELECT AVG(pret)
+FROM produs
+WHERE nume_categorie = "ruj";
+
+-- Cel mai mic,respectiv cel mai mare pret din lista de produse
+SELECT (pret),Max(pret)
+FROM produs;
+
+-- Lista produselor de la firma Rimmel care nu sunt disponibile
+SELECT nume_produs
+FROM produs
+WHERE produs.firma = "Rimmel" AND produs.disponibilitate="indisponibil";
+
+-- Lista clientilor ordonata dupa prenume
+SELECT nume_client,prenume_client
+FROM client_magazin
+ORDER BY SUBSTRING(prenume_client,1,1);
+
+-- Lista produselor ordonata dupa pret
+SELECT nume_produs,pret
+FROM produs
+ORDER BY pret ASC;
+
+-- Lista clientilor care nu sunt din Romania
+SELECT nume_client
+FROM client_magazin,adresa_client
+WHERE client_magazin.id_adresa_client = adresa_client.id_adresa_client AND
+adresa_client.tara NOT IN ('Romania');
+
+-- Lista produselor ordonate descrescator dupa categorie
+SELECT nume_produs,nume_categorie
+FROM produs
+ORDER BY nume_categorie DESC;
+
+-- ID-ul cardurilor si numele clientului cu suma sub 500 de lei
+SELECT id_card,nume_client
+FROM card_credit,client_magazin
+WHERE suma_card < 500 AND client_magazin.id_card_credit = card_credit.id_card;
+
+-- Lista de clienti a caror prenume incepe cu litera a
+SELECT * 
+FROM client_magazin
+WHERE prenume_client LIKE 'a%';
+
+-- Numarul de tari diferite
+SELECT COUNT(DISTINCT tara) FROM adresa_client;
+
+--Numele produsului si numele clientului care a facut o comanda de un produs dint-o anumita categorie
+SELECT nume_produs,nume_client
+FROM produs
+JOIN comanda_inregistrata
+ON produs.id_produs = comanda_inregistrata.id_produs
+JOIN client_magazin
+ON client_magazin.id_client = comanda_inregistrata.id_client
+WHERE produs.nume_categorie = "pudra";
+
+-- Lista produselor care au pretul mai mic ca si 50 sau intre 100 si 200
+SELECT *
+FROM produs
+WHERE produs.pret < 50
+UNION
+SELECT * 
+FROM produs
+WHERE produs.pret >= 100 AND produs.pret <=200;
+
+-- Unirea tabelei carr_credit cu tabela produs
+SELECT *
+FROM card_credit,produs;
+
+-- Lista clientilor care au facut comanda intr-o zi de vineri si care au ales metoda de plata la livrare
+SELECT nume_client
+FROM client_magazin
+JOIN comanda_inregistrata
+ON client_magazin.id_client = comanda_inregistrata.id_client
+JOIN metoda_plata
+ON comanda_inregistrata.id_metoda_plata = metoda_plata.id_metoda_plata
+WHERE dayname(comanda_inregistrata.data_comenzii)="Friday" AND metoda_plata.tip_plata = "plata la livrare";
+
+-- Lista clientilor a caror diferenta datei de nastere este mai mare decat 0
+SELECT c1.nume_client,c2.nume_client,datediff(c1.data_nasterii,c2.data_nasterii)
+from client_magazin c1,client_magazin c2 
+where datediff(c1.data_nasterii,c2.data_nasterii) > 0;
+
+-- Lista produselor care se gasesc intr-o categorie de maxim 3 ori
+SELECT COUNT(produs.id_produs),nume_produs,produs.id_produs
+FROM produs
+GROUP BY produs.nume_categorie
+HAVING COUNT(produs.id_produs) <= 3;
+
+-- Lista produselor care se regasesc in tabela de comenzi si a caror client are id-ul >=8
+SELECT nume_produs
+FROM produs
+WHERE EXISTS(
+     SELECT id_comanda 
+     FROM comanda_inregistrata
+     WHERE produs.id_produs = comanda_inregistrata.id_produs AND id_client >= 8);
+
+-- Lista produselor,in ordine crescatoare, care nu se regasesc in categoria produselor a caror
+-- cantitate este mai mare decat 20
+SELECT DISTINCT produs.id_produs,nume_produs
+FROM produs
+WHERE id_produs NOT IN
+(select id_produs from produs where cantitate > 20)
+ORDER BY id_produs ASC;
+
+-- Lista primilor 3 clienti a caror nume este mai mare decat prenumele
+SELECT* 
+FROM client_magazin
+WHERE char_length(nume_client) > char_length(prenume_client)
+LIMIT 3;

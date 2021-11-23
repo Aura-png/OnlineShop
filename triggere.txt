@@ -1,0 +1,47 @@
+  --triggere
+1)cand se aduga o comanda se scade din produs_cantitate cantitatea din comanda
+
+create trigger adaugaComanda_actualizeazaCant
+  after insert on comanda_inregistrata
+  for each row 
+  begin
+  
+    set @can:=(select comanda_inregistrata.cantitate_produs
+    from comanda_inregistrata
+    where id_comanda = new.id_comanda);
+    
+     update produs
+     set produs.cantitate = produs.cantitate - @can;
+     
+	end //
+
+2)daca se sterge o comanda se sterge si factura acesteia
+
+delimiter //
+create trigger stergereComanda
+after delete on comanda_inregistrata
+for each row
+begin
+
+   delete from factura where id_factura = old.id_factura;
+
+end 
+//
+  
+  drop trigger stergereComanda;
+
+3)Daca cantitatea prod este sub 0 dupa comanda se pune 0 ca si cantitate si se trece ca fiind indisponibil
+
+ delimiter //
+  create trigger adaugaIndisponibilitate
+  after insert on comanda_inregistrata
+  for each row 
+  begin
+    
+     update produs
+     set produs.disponibilitate = "indisponibil",produs.cantitate = 0
+     where produs.cantitate <= 0 and produs.id_produs = new.id_produs;
+     
+	end //
+  
+  drop trigger adaugaIndisponibilitate;

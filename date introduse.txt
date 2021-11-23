@@ -1,0 +1,170 @@
+create database magazin_de_cosmetice_online;
+create table contact_magazin(
+id_contact_magazin int primary key not null,
+nume_magazin varchar(45) not null unique,
+numar_telefon varchar(10) not null,
+adresa_email varchar(45) not null,
+adresa_URL varchar(45) not null);
+
+create table produs(
+id_produs int primary key not null auto_increment,
+nume_produs varchar(45) not null unique,
+nume_categorie varchar(45) not null,
+firma varchar(45) not null,
+pret decimal(5,2) not null,
+disponibilitate varchar(20) not null,
+cantitate int);
+
+
+create table magazin(
+id_contact_magazin int not null,
+id_produs int not null,
+foreign key (id_produs) references produs (id_produs),
+foreign key (id_contact_magazin) references contact_magazin (id_contact_magazin));
+
+create table metoda_plata(
+id_metoda_plata int not null auto_increment primary key,
+tip_plata varchar(20) not null);
+
+create table factura(
+id_factura int not null auto_increment primary key,
+id_client int not null,
+pret_total decimal(5,2),
+id_produs int not null,
+foreign key (id_produs) references produs (id_produs),
+foreign key (id_client) references client_magazin (id_client));
+
+create table card_credit(
+id_card int not null primary key,
+numar_card varchar(16) unique,
+data_expirare date,
+suma_card decimal(5,2));
+
+create table adresa_client(
+id_adresa_client int not null auto_increment primary key,
+localitate varchar(45) not null,
+strada varchar(45) not null,
+numar int not null,
+judet varchar(45) not null,
+cod_postal varchar(6) not null,
+tara varchar(45) not null);
+
+create table client_magazin(
+id_client int not null auto_increment primary key,
+nume_client varchar(45) not null,
+prenume_client varchar(45) not null,
+id_adresa_client int not null,
+data_nasterii date,
+numar_telefon varchar(10) not null,
+adresa_email varchar(45),
+id_card int,
+parola_client varchar(45) not null unique,
+foreign key (id_adresa_client) references adresa_client (id_adresa_client),
+foreign key (id_card) references card_credit (id_card));
+
+
+create table comanda_inregistrata(
+id_comanda int not null auto_increment primary key,
+id_client int not null,
+id_produs int not null,
+cantitate_produs int not null,
+id_metoda_plata int not null,
+id_factura int not null,
+data_comanda date not null,
+foreign key (id_client) references client_magazin (id_client),
+foreign key (id_produs) references produs (id_produs),
+foreign key (id_metoda_plata) references metoda_plata (id_metoda_plata),
+foreign key (id_factura) references factura (id_factura));
+
+
+insert into contact_magazin values(1,"Teo&Aura SRL","0258559624","beauty.at@yahoo.com","www.beautySRL.ro");
+insert into produs values(1,"Perfect Matte","ruj","NYX",30.00,"in stoc",100);
+insert into produs values(2,"Rimmel London","rimel","M.A.C",90.00,"in stoc",150);
+insert into produs values(3,"Stay Matte","pudra","Rimmel",20.00,"indisponibil",0);
+insert into produs values(4,"Rock Princess","fard pleoape","M.A.C",115.00,"in stoc",200);
+insert into produs values(5,"Lash Sensational","rimel","Maybelyne",50.00,"in stoc",150);
+insert into produs values(6,"Studio Fix Fluid","fond de ten","M.A.C",175.00,"indisponibil",0);
+insert into produs values(7,"Lash Princess","rimel","Essence",45.00,"in stoc",75);
+insert into produs values(8,"Mini Tapered Blending","pensula","Sephora",130.00,"in stoc",50);
+insert into produs values(9,"Face studio","pudra","Maybelyne",70.00,"indisponibil",0);
+insert into produs values(10,"Perfect Colour","fard pleoape","Sephora",130.00,"in stoc",50);
+insert into produs values(11,"Colour Stay","fond de ten","Revlon",45.00,"in stoc",45);
+insert into produs values(12,"Sweety Lips","ruj","NYX",40.00,"in stoc",100);
+insert into produs values(13,"Make Up Buffer","pensula","Essence",20.00,"in stoc",20);
+
+
+
+insert into magazin values(1,1);
+insert into magazin values(1,2);
+insert into magazin values(1,3);
+insert into magazin values(1,4);
+insert into magazin values(1,5);
+insert into magazin values(1,6);
+insert into magazin values(1,7);
+insert into magazin values(1,8);
+insert into magazin values(1,9);
+insert into magazin values(1,10);
+insert into magazin values(1,11);
+insert into magazin values(1,12);
+insert into magazin values(1,13);
+
+insert into metoda_plata values(1,"plata la livrare");
+insert into metoda_plata values(2,"plata cu cardul");
+
+insert into factura values(1,1,000.00,1);
+insert into factura values(2,2,000.00,3);
+insert into factura values(3,3,000.00,5);
+insert into factura values(4,4,000.00,1);
+insert into factura values(5,5,000.00,12);
+insert into factura values(6,6,000.00,9);
+insert into factura values(7,7,000.00,4);
+insert into factura values(8,8,000.00,1);
+insert into factura values(9,9,000.00,4);
+insert into factura values(10,10,000.00,1);
+
+insert into card_credit values(1,"4567012343259807","2020-12-00",500.00);
+insert into card_credit values(2,"0934879334210576","2023-03-00",10.00);
+insert into card_credit values(3,"9034568214043267","2024-10-00",900.00);
+insert into card_credit values(4,"1096769236106732","2025-01-00",750.00);
+insert into card_credit values(5,"7450452319068723","2021-09-00",0.00);
+insert into card_credit values(6,"7145371256420968","2021-11-00",600.00);
+insert into card_credit values(7,"1862094511000202","2022-05-00",450.00);
+insert into card_credit values(8,"9087101057349981","2020-12-00",300.00);
+insert into card_credit values(9,"2201453298048871","2023-11-00",50.00);
+insert into card_credit values(10,"223100009871331","2021-01-00",900.00);
+
+insert into adresa_client values(1,"Abrud","Plopilor",15,"Alba","515100","Romania");
+insert into adresa_client values(2,"Campeni","Aleea Trandafirilor",3,"Alba","515101","Romania");
+insert into adresa_client values(3,"Turda","Sperantei",25,"Cluj","523268","Romania");
+insert into adresa_client values(4,"Detroit","Oxford",7,"-","432355","Michigan");
+insert into adresa_client values(5,"Belcesti","Eroilor",11,"Iasi","123456","Romania");
+insert into adresa_client values(6,"Beclean","Vasile Alecsandri",13,"Bistrita-Nasaud","645478","Romania");
+insert into adresa_client values(7,"Timisoara","Lalelelor",1,"Timis","673124","Romania");
+insert into adresa_client values(8,"Paris","La Fleur",35,"-","986903","Franta");
+insert into adresa_client values(9,"Lipova","Mihai Viteazu",26,"Arad","901265","Romania");
+insert into adresa_client values(10,"Sighisoara","Zapezii",40,"Brasov","354216","Romania");
+
+
+insert into client_magazin values(1,"Voda","Andrei",1,"1997-10-10","0745321188","voda_andrei@yahoo.com",1,"andrei1");
+insert into client_magazin values(2,"Cristea","Maria",2,"2000-12-01","0735901481","maria.cristea@gmail.com",2,"234");
+insert into client_magazin values(3,"Rasteiu","Andreea",3,"2001-01-09","0767890341","r.andreea@yahoo.ro",3,"trye");
+insert into client_magazin values(4,"Popescu","Cristian",4,"1990-11-01","0755425413","popescucristi@yahoo.com",4,"35ewgd");
+insert into client_magazin values(5,"Tontea","Ioan",5,"1982-10-11","0765110556","titi.tontea@yahoo.ro",5,"ewhfea");
+insert into client_magazin values(6,"Tartar","Alexandru",6,"1992-03-24","0744174901","alex_tartar@yahoo.com",6,"5eee");
+insert into client_magazin values(7,"Bucea","Denisa",7,"1999-09-01","0712000852","denisa99@gmail.com",7,"1234");
+insert into client_magazin values(8,"Gherman","Adrian",8,"2000-02-29","0742631539","g.adi@yahoo.ro",8,"3456");
+insert into client_magazin values(9,"Chicidea","Gabriel",9,"2002-01-09","0745120922","gabi.chicidea@yahoo.com",9,"4566");
+insert into client_magazin values(10,"Simina","Daniel",10,"2000-08-27","0744325001","danielsimina@yahoo.com",10,"64532");
+
+
+insert into comanda_inregistrata values(1,1,3,0,1,1,"2020-10-02");
+insert into comanda_inregistrata values(2,2,5,0,1,2,"2020-11-11");
+insert into comanda_inregistrata values(3,3,13,0,2,3,"2020-08-10");
+insert into comanda_inregistrata values(4,4,5,0,2,4,"2020-10-23");
+insert into comanda_inregistrata values(5,5,2,0,1,5,"2015-12-12");
+insert into comanda_inregistrata values(6,6,8,0,1,6,"2014-03-01");
+insert into comanda_inregistrata values(7,7,10,0,2,7,"2019-12-02");
+insert into comanda_inregistrata values(8,8,10,0,1,8,"2020-01-03");
+insert into comanda_inregistrata values(9,9,3,0,1,9,"2018-11-09");
+insert into comanda_inregistrata values(10,10,5,0,2,10,"2013-10-10");
+insert into comanda_inregistrata values(1,1,3,0,1,1,"2020-10-02");
